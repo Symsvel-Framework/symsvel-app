@@ -173,7 +173,7 @@ describe('ephemeral App session', () => {
 
 	it('rejects unauthenticated and public module calls', async () => {
 		await expect(appApi('/api/admins')).rejects.toMatchObject({ status: 401 });
-		await expect(appApi('/api/users')).rejects.toThrow('authenticated App path');
+		await expect(appApi('/apiopen/users')).rejects.toThrow('authenticated App path');
 		await expect(appApi('/api/admins', { public: true })).rejects.toThrow('authenticated App path');
 		await expect(appApi('/api/admins', { accessToken: 'injected' })).rejects.toThrow(
 			'authenticated App path'
@@ -238,7 +238,7 @@ describe('ephemeral App session', () => {
 	});
 
 	it('rejects a mismatched App identity', async () => {
-		mockedApi.mockResolvedValueOnce(tokens).mockResolvedValueOnce({ id: 7, context: 'app' });
+		mockedApi.mockResolvedValueOnce(tokens).mockResolvedValueOnce({ id: 7, context: 'bo' });
 		await expect(loginApp('admin@example.test', 'password')).rejects.toThrow('Invalid App identity');
 		expect(await currentApp()).toBeNull();
 	});

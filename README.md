@@ -48,3 +48,9 @@ L'application possède désormais le client HTTP natif `src/lib/api/client.ts` e
 Les pages natives `/login`, `/verify-email` et `/dashboard` consomment les endpoints Auth App. Le lien `/register` est fourni par le **module Users** via Tooling lorsque App est installée. Les textes FR/EN des pages sont externalisés dans `src/lib/i18n/auth.ts`. L'URL d'e-mail côté Settings `auth.app_verify_email_url` doit pointer vers `https://app.exemple.test/verify-email`, sans query string ; le jeton est temporairement lu à l'arrivée, retiré immédiatement de l'historique et envoyé par POST public, puis détruit.
 
 Comme pour le BO, les tokens d'accès/refresh sont **en mémoire JavaScript seulement**, sans localStorage ni cookies JS : le rechargement complet demande une nouvelle connexion. Il s'agit d'un transport transitoire, non validé pour la production, dans l'attente du canal HttpOnly/Secure et des règles CORS/CSRF. Les tests unitaires portés depuis le client BO exercent cette isolation, le renouvellement et les courses de session. CI, compilation du module Users synchronisé et crash-tests HTTP/SGBD réels sont nécessaires avant clôture.
+
+### Correction du workflow de formatage et des tests (16/11/2026)
+
+Le runner App peut lire le dépôt, mais sa connexion GitHub Actions n'a pas de droit `push` (HTTP 403). Le job n'essaie plus de pousser automatiquement ses corrections Prettier : il formate **uniquement dans son workspace éphémère** avant les contrôles. Les sources doivent être formatées et commitées par le mainteneur lorsque nécessaire ; l'absence de push en CI ne doit pas masquer un échec fonctionnel.
+
+Deux assertions copiées depuis le client BO ont été adaptées à la véritable séparation App : `appApi` rejette `/apiopen/*` (pas `/api/users`), et le client refuse explicitement une identité `context:bo`. Aucun contrat de sécurité runtime n'est assoupli.
