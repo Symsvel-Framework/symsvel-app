@@ -4,6 +4,7 @@
   import { api, ApiError } from '../../lib/api/client';
   import { uiLanguage } from '../../lib/api/locales';
   import { authLabels } from '../../lib/i18n/auth';
+  import { passwordStrength } from '../../lib/password/strength';
 
   let token = $state<string | null>(null);
   let loaded = $state(false);
@@ -14,6 +15,7 @@
   let error = $state('');
   const language = $derived($uiLanguage ?? (typeof navigator === 'undefined' ? 'en' : navigator.language));
   const t = $derived(authLabels(language));
+  const strength = $derived(passwordStrength(password));
 
   onMount(() => {
     const candidate = new URLSearchParams(window.location.search).get('token');
@@ -30,8 +32,7 @@
       error = t.resetMismatch;
       return;
     }
-    const length = new TextEncoder().encode(password).length;
-    if (length < 12 || length > 1024 || password.includes('\0')) {
+    if (!strength.valid) {
       error = t.resetInvalidPassword;
       return;
     }
@@ -65,12 +66,21 @@
       {#if error}<p class="alert" role="alert">{error}</p>{/if}
       <form class="form" onsubmit={complete}>
         <label for="reset-password">{t.newPassword}</label>
-        <input id="reset-password" type="password" autocomplete="new-password" minlength="12" maxlength="1024" bind:value={password} required />
+        <input id="reset-password" type="password" autocomplete="new-password" maxlength="1024" bind:value={password} required />
+        <small>{t.resetPasswordRule}</small>
+        <meter min="0" max="4" value={strength.score} aria-label={t.passwordStrength} />
+        <small aria-live="polite">{t.passwordStrength}: {t.strengthLevels[strength.score]}</small>
+        <small>{t.strengthHint}</small>
         <label for="reset-confirm">{t.confirmPassword}</label>
-        <input id="reset-confirm" type="password" autocomplete="new-password" minlength="12" maxlength="1024" bind:value={confirmation} required />
+        <input id="reset-confirm" type="password" autocomplete="new-password" maxlength="1024" bind:value={confirmation} required />
         <button type="submit" disabled={busy}>{t.resetButton}</button>
       </form>
     {/if}
     <p><a href={resolve('/login')}>{t.backToLogin}</a></p>
   </section>
 </main>
+
+<style>
+  meter { display: block; width: 100%; height: 13px; }
+  small { color: #667085; }
+</style>

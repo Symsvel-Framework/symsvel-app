@@ -22,7 +22,11 @@ const labels = {
     confirmPassword: 'Confirmer le mot de passe', resetButton: 'Enregistrer le nouveau mot de passe',
     resetSuccess: 'Votre mot de passe a été modifié. Reconnectez-vous.',
     resetMismatch: 'Les deux mots de passe ne correspondent pas.',
-    resetInvalidPassword: 'Choisissez un mot de passe valide de 12 caractères minimum.',
+    resetInvalidPassword: 'Choisissez un mot de passe de 12 à 1024 octets UTF-8, sans caractère nul.',
+    resetPasswordRule: '12 à 1024 octets UTF-8, sans caractère nul.',
+    passwordStrength: 'Diversité du mot de passe',
+    strengthHint: 'Une phrase longue et des caractères variés sont recommandés.',
+    strengthLevels: ['Aucune saisie', 'Très faible', 'Faible', 'Moyenne', 'Bonne'],
     resetInvalidToken: 'Le lien est invalide, expiré ou déjà utilisé.'
   },
   en: {
@@ -48,7 +52,11 @@ const labels = {
     confirmPassword: 'Confirm password', resetButton: 'Save new password',
     resetSuccess: 'Your password was changed. Please sign in again.',
     resetMismatch: 'Passwords do not match.',
-    resetInvalidPassword: 'Choose a valid password with at least 12 characters.',
+    resetInvalidPassword: 'Choose a password of 12 to 1024 UTF-8 bytes without NUL.',
+    resetPasswordRule: '12 to 1024 UTF-8 bytes, no NUL character.',
+    passwordStrength: 'Password diversity',
+    strengthHint: 'A long passphrase with varied characters is recommended.',
+    strengthLevels: ['Empty', 'Very low', 'Low', 'Moderate', 'Good'],
     resetInvalidToken: 'This link is invalid, expired or has already been used.'
   }
 };

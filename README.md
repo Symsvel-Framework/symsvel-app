@@ -72,3 +72,7 @@ Les messages FR/EN sont déclarés dans `src/lib/i18n/auth.ts` ; aucun appel ne 
 ## Indicateur de robustesse sur les écrans de création de mot de passe (16/11/2026)
 
 Le helper natif `src/lib/password/strength.ts` calcule sur la saisie un indicateur **descriptif** de diversité (longueur, catégories de caractères) et applique exactement le contrat serveur actuel : 12 à 1024 **octets UTF-8**, sans NUL. Le score de 0 à 4 n'est ni une estimation cryptographique ni une exigence supplémentaire ; la saisie n'est pas rejetée pour l'absence d'une majuscule ou d'un symbole. Les modules peuvent réutiliser ce helper dans leurs formulaires sans dupliquer les règles, avec libellés externalisés FR/EN. Vitest protège les limites, Unicode, NUL et score. CT navigateur et CI requis.
+
+### Indicateur de mot de passe sur `/reset-password` (16/11/2026)
+
+La page utilise le helper natif `passwordStrength()` (règle serveur inchangée : 12 à 1024 octets UTF-8, sans NUL) et présente une jauge de diversité traduite FR/EN. Les classes de caractères influencent l'indicateur uniquement, sans imposer une nouvelle contrainte serveur. La validation de formulaire emploie `strength.valid`, et les attributs HTML `minlength` en caractères ont été retirés pour éviter les divergences sur les saisies Unicode. CI et CT à vérifier.
