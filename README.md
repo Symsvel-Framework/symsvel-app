@@ -54,3 +54,7 @@ Comme pour le BO, les tokens d'accès/refresh sont **en mémoire JavaScript seul
 Le runner App peut lire le dépôt, mais sa connexion GitHub Actions n'a pas de droit `push` (HTTP 403). Le job n'essaie plus de pousser automatiquement ses corrections Prettier : il formate **uniquement dans son workspace éphémère** avant les contrôles. Les sources doivent être formatées et commitées par le mainteneur lorsque nécessaire ; l'absence de push en CI ne doit pas masquer un échec fonctionnel.
 
 Deux assertions copiées depuis le client BO ont été adaptées à la véritable séparation App : `appApi` rejette `/apiopen/*` (pas `/api/users`), et le client refuse explicitement une identité `context:bo`. Aucun contrat de sécurité runtime n'est assoupli.
+
+### Routage des modules installés à la demande (16/11/2026)
+
+La page native `/login` propose `/register`, route injectée **uniquement après installation de Users**. Le `resolve('/register')` typé de SvelteKit échoue lorsque le dépôt App est compilé indépendamment avant synchronisation. Le lien est donc construit à partir du préfixe natif `base` (`$app/paths`) avec `/register`. Les routes **natives** connues (`/login`, `/dashboard`, `/verify-email`) continuent d'utiliser `resolve()`. Ce contrat est vérifié par la CI du dépôt App et celle de l'App assemblée dans Users.

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { resolve } from '$app/paths';
+  import { base, resolve } from '$app/paths';
   import { ApiError } from '../../lib/api/client';
   import { uiLanguage } from '../../lib/api/locales';
   import { loginApp } from '../../lib/api/session';
@@ -44,7 +44,7 @@
       <input id="login-password" type="password" autocomplete="current-password" bind:value={password} required />
       <button type="submit" disabled={busy}>{busy ? t.signInBusy : t.signInButton}</button>
     </form>
-    <p><a href={resolve('/register')}>{t.register}</a></p>
+    <p><a href={base + '/register'}>{t.register}</a></p>
     <p><a href={resolve('/verify-email')}>{t.verifyEmail}</a></p>
   </section>
 </main>
