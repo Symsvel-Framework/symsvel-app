@@ -15,7 +15,7 @@
   const t = $derived(authLabels(language));
   // Users contributes /register only after module synchronization.
   // Resolve a known host route to preserve SvelteKit's deployment base.
-  const registrationHref = resolve('/').replace(/\\/$/, '') + '/register';
+  const registrationHref = resolve('/').replace(/\/$/, '') + '/register';
 
   async function signIn(event: SubmitEvent): Promise<void> {
     event.preventDefault();

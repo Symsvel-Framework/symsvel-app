@@ -70,3 +70,5 @@ La page native `/login` propose `/register`, route injectée **uniquement après
 ### Lien vers /register réellement optionnel (16/11/2026)
 
 SvelteKit 3 refuse aussi de typer `resolve('/register' as never)` lorsque la route n'est pas déclarée dans le dépôt hôte. L'adresse est désormais construite **sans cast ni configuration globale**, en récupérant le préfixe de déploiement par `resolve('/')`, puis en ajoutant `/register`. Le contrat reste correct après synchronisation de Users et dans le BO hôte isolé. Cette approche évite de dépendre des anciens exports `base` de SvelteKit.
+
+**Correction de syntaxe :** l'expression utilisée pour retirer la barre oblique terminale du préfixe doit être `/\\/$/` au sens de la regexp JS `/\/$/`, sans doubler l'antislash dans la source Svelte.
