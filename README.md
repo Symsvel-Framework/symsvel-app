@@ -62,3 +62,9 @@ Deux assertions copiées depuis le client BO ont été adaptées à la véritabl
 ### Navigation vers une route ajoutée par Users (16/11/2026)
 
 La page native `/login` propose `/register` seulement après synchronisation du module Users. Le dépôt App hôte, qui se compile aussi indépendamment, ne connaît pas cette route dans les types SvelteKit. L'URL est construite avec `resolve('/')` (préfixe de déploiement natif) suivi de `register`. L'unique lien utilisant cette URL calculée désactive localement la règle ESLint `svelte/no-navigation-without-resolve` ; les autres liens internes gardent `resolve()` directement. On évite ainsi toute modification générale du lint ou des routes typées. Les CI App et Users assemblée doivent valider ce cas de module facultatif.
+
+## Réinitialisation du mot de passe App (16/11/2026)
+
+Les routes natives `/forgot-password` et `/reset-password` utilisent les nouveaux endpoints Auth publics `/apiopen/auth/password-reset/request` et `/apiopen/auth/password-reset/complete`. Une demande ne révèle pas l'existence du compte et ne peut envoyer de mail qu'à une adresse déjà vérifiée. Le lien HTTPS est défini côté Settings dans `auth.app_reset_url` : sa valeur doit cibler `https://app.exemple.test/reset-password` sans query string. À l'ouverture, le jeton à usage unique est retiré de l'historique du navigateur, puis transmis uniquement par POST public après double saisie du mot de passe (12 à 1024 octets, sans NUL). Auth révoque les sessions App existantes lors du changement de mot de passe.
+
+Les messages FR/EN sont déclarés dans `src/lib/i18n/auth.ts` ; aucun appel ne nécessite ou ne crée une session avant la prochaine connexion. Les tests Playwright `app-reset.e2e.ts` contrôlent le formulaire, l'absence de Bearer, le secret retiré de l'URL et le message non énumérant. CI Svelte et CT avec la vraie BDD et SMTP restent nécessaires.

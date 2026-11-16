@@ -14,7 +14,16 @@ const labels = {
     resendButton: 'Demander un nouveau lien',
     resendBusy: 'Demande en cours…',
     resendAccepted: 'Si le compte est en attente, un lien de confirmation sera envoyé.',
-    backToLogin: 'Revenir à la connexion'
+    backToLogin: 'Revenir à la connexion',
+    forgotPassword: 'Mot de passe oublié ?', resetRequestTitle: 'Réinitialiser mon mot de passe',
+    resetRequestHint: 'Un lien sera envoyé si cette adresse correspond à un compte vérifié.',
+    resetRequestButton: 'Recevoir un lien', resetRequestAccepted: 'Si un compte vérifié existe, un lien vous sera envoyé.',
+    resetTitle: 'Choisir un nouveau mot de passe', newPassword: 'Nouveau mot de passe',
+    confirmPassword: 'Confirmer le mot de passe', resetButton: 'Enregistrer le nouveau mot de passe',
+    resetSuccess: 'Votre mot de passe a été modifié. Reconnectez-vous.',
+    resetMismatch: 'Les deux mots de passe ne correspondent pas.',
+    resetInvalidPassword: 'Choisissez un mot de passe valide de 12 caractères minimum.',
+    resetInvalidToken: 'Le lien est invalide, expiré ou déjà utilisé.'
   },
   en: {
     signIn: 'Sign in', signInDescription: 'Access your personal space.',
@@ -31,7 +40,16 @@ const labels = {
     resendButton: 'Request new link',
     resendBusy: 'Requesting…',
     resendAccepted: 'If the account is pending, a verification link will be sent.',
-    backToLogin: 'Back to sign in'
+    backToLogin: 'Back to sign in',
+    forgotPassword: 'Forgot password?', resetRequestTitle: 'Reset my password',
+    resetRequestHint: 'A link will be sent if this address belongs to a verified account.',
+    resetRequestButton: 'Request reset link', resetRequestAccepted: 'If a verified account exists, a link will be sent.',
+    resetTitle: 'Choose a new password', newPassword: 'New password',
+    confirmPassword: 'Confirm password', resetButton: 'Save new password',
+    resetSuccess: 'Your password was changed. Please sign in again.',
+    resetMismatch: 'Passwords do not match.',
+    resetInvalidPassword: 'Choose a valid password with at least 12 characters.',
+    resetInvalidToken: 'This link is invalid, expired or has already been used.'
   }
 };
 export type AuthLabels = (typeof labels)['fr'];

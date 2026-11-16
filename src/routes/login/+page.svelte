@@ -53,5 +53,6 @@
       <a href={registrationHref}>{t.register}</a>
     </p>
     <p><a href={resolve('/verify-email')}>{t.verifyEmail}</a></p>
+    <p><a href={resolve('/forgot-password')}>{t.forgotPassword}</a></p>
   </section>
 </main>
