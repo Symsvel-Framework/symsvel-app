@@ -13,6 +13,9 @@
   // Users owns /register and Tooling adds that route only to assembled projects.
   const language = $derived($uiLanguage ?? (typeof navigator === 'undefined' ? 'en' : navigator.language));
   const t = $derived(authLabels(language));
+  // Users contributes /register only after module synchronization.
+  // Resolve a known host route to preserve SvelteKit's deployment base.
+  const registrationHref = resolve('/').replace(/\\/$/, '') + '/register';
 
   async function signIn(event: SubmitEvent): Promise<void> {
     event.preventDefault();
@@ -45,7 +48,7 @@
       <input id="login-password" type="password" autocomplete="current-password" bind:value={password} required />
       <button type="submit" disabled={busy}>{busy ? t.signInBusy : t.signInButton}</button>
     </form>
-    <p><a href={resolve('/register' as never)}>{t.register}</a></p>
+    <p><a href={registrationHref}>{t.register}</a></p>
     <p><a href={resolve('/verify-email')}>{t.verifyEmail}</a></p>
   </section>
 </main>

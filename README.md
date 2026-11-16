@@ -66,3 +66,7 @@ La page native `/login` propose `/register`, route injectée **uniquement après
 ### Résolution SvelteKit 3 pour une route de module (16/11/2026)
 
 `$app/paths` de la version SvelteKit utilisée ne fournit pas de membre `base` (détecté par `svelte-check`). Le lien vers `/register` passe désormais par `resolve('/register' as never)` : ce cast est **limité au lien vers une route de module facultative** inconnue du système de types du dépôt App hôte, mais réellement fournie par Users après synchronisation. `resolve()` garde la gestion native du préfixe de déploiement. Aucune modification générale de `tsconfig` ni des API n'est nécessaire.
+
+### Lien vers /register réellement optionnel (16/11/2026)
+
+SvelteKit 3 refuse aussi de typer `resolve('/register' as never)` lorsque la route n'est pas déclarée dans le dépôt hôte. L'adresse est désormais construite **sans cast ni configuration globale**, en récupérant le préfixe de déploiement par `resolve('/')`, puis en ajoutant `/register`. Le contrat reste correct après synchronisation de Users et dans le BO hôte isolé. Cette approche évite de dépendre des anciens exports `base` de SvelteKit.
