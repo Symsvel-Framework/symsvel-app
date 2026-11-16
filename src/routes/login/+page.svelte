@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { base, resolve } from '$app/paths';
+  import { resolve } from '$app/paths';
   import { ApiError } from '../../lib/api/client';
   import { uiLanguage } from '../../lib/api/locales';
   import { loginApp } from '../../lib/api/session';
@@ -10,6 +10,7 @@
   let password = $state('');
   let busy = $state(false);
   let error = $state('');
+  // Users owns /register and Tooling adds that route only to assembled projects.
   const language = $derived($uiLanguage ?? (typeof navigator === 'undefined' ? 'en' : navigator.language));
   const t = $derived(authLabels(language));
 
@@ -44,7 +45,7 @@
       <input id="login-password" type="password" autocomplete="current-password" bind:value={password} required />
       <button type="submit" disabled={busy}>{busy ? t.signInBusy : t.signInButton}</button>
     </form>
-    <p><a href={base + '/register'}>{t.register}</a></p>
+    <p><a href={resolve('/register' as never)}>{t.register}</a></p>
     <p><a href={resolve('/verify-email')}>{t.verifyEmail}</a></p>
   </section>
 </main>

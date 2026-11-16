@@ -62,3 +62,7 @@ La page native `/login` propose `/register`, route injectée **uniquement après
 ### Tests navigateurs App (16/11/2026)
 
 `src/routes/app-auth.e2e.ts` vérifie dans Chromium les écrans natifs avec réponses API simulées : connexion App, vérification de session avec Bearer App, déconnexion, refus de connexion, confirmation d'e-mail avec retrait du jeton d'URL, et renvoi anonyme d'une confirmation. La validation contrôle aussi les paramètres HTTP et l'absence d'Authorization sur les appels `/apiopen`. Ces tests s'ajoutent aux tests Vitest du client, mais ne remplacent pas les crash-tests avec le vrai backend et l'envoi SMTP.
+
+### Résolution SvelteKit 3 pour une route de module (16/11/2026)
+
+`$app/paths` de la version SvelteKit utilisée ne fournit pas de membre `base` (détecté par `svelte-check`). Le lien vers `/register` passe désormais par `resolve('/register' as never)` : ce cast est **limité au lien vers une route de module facultative** inconnue du système de types du dépôt App hôte, mais réellement fournie par Users après synchronisation. `resolve()` garde la gestion native du préfixe de déploiement. Aucune modification générale de `tsconfig` ni des API n'est nécessaire.
