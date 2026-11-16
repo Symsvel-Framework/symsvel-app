@@ -55,20 +55,10 @@ Le runner App peut lire le dépôt, mais sa connexion GitHub Actions n'a pas de 
 
 Deux assertions copiées depuis le client BO ont été adaptées à la véritable séparation App : `appApi` rejette `/apiopen/*` (pas `/api/users`), et le client refuse explicitement une identité `context:bo`. Aucun contrat de sécurité runtime n'est assoupli.
 
-### Routage des modules installés à la demande (16/11/2026)
-
-La page native `/login` propose `/register`, route injectée **uniquement après installation de Users**. Le `resolve('/register')` typé de SvelteKit échoue lorsque le dépôt App est compilé indépendamment avant synchronisation. Le lien est donc construit à partir du préfixe natif `base` (`$app/paths`) avec `/register`. Les routes **natives** connues (`/login`, `/dashboard`, `/verify-email`) continuent d'utiliser `resolve()`. Ce contrat est vérifié par la CI du dépôt App et celle de l'App assemblée dans Users.
-
 ### Tests navigateurs App (16/11/2026)
 
 `src/routes/app-auth.e2e.ts` vérifie dans Chromium les écrans natifs avec réponses API simulées : connexion App, vérification de session avec Bearer App, déconnexion, refus de connexion, confirmation d'e-mail avec retrait du jeton d'URL, et renvoi anonyme d'une confirmation. La validation contrôle aussi les paramètres HTTP et l'absence d'Authorization sur les appels `/apiopen`. Ces tests s'ajoutent aux tests Vitest du client, mais ne remplacent pas les crash-tests avec le vrai backend et l'envoi SMTP.
 
-### Résolution SvelteKit 3 pour une route de module (16/11/2026)
+### Navigation vers une route ajoutée par Users (16/11/2026)
 
-`$app/paths` de la version SvelteKit utilisée ne fournit pas de membre `base` (détecté par `svelte-check`). Le lien vers `/register` passe désormais par `resolve('/register' as never)` : ce cast est **limité au lien vers une route de module facultative** inconnue du système de types du dépôt App hôte, mais réellement fournie par Users après synchronisation. `resolve()` garde la gestion native du préfixe de déploiement. Aucune modification générale de `tsconfig` ni des API n'est nécessaire.
-
-### Lien vers /register réellement optionnel (16/11/2026)
-
-SvelteKit 3 refuse aussi de typer `resolve('/register' as never)` lorsque la route n'est pas déclarée dans le dépôt hôte. L'adresse est désormais construite **sans cast ni configuration globale**, en récupérant le préfixe de déploiement par `resolve('/')`, puis en ajoutant `/register`. Le contrat reste correct après synchronisation de Users et dans le BO hôte isolé. Cette approche évite de dépendre des anciens exports `base` de SvelteKit.
-
-**Correction de syntaxe :** l'expression utilisée pour retirer la barre oblique terminale du préfixe doit être `/\\/$/` au sens de la regexp JS `/\/$/`, sans doubler l'antislash dans la source Svelte.
+La page native `/login` propose `/register` seulement après synchronisation du module Users. Le dépôt App hôte, qui se compile aussi indépendamment, ne connaît pas cette route dans les types SvelteKit. L'URL est construite avec `resolve('/')` (préfixe de déploiement natif) suivi de `register`. L'unique lien utilisant cette URL calculée désactive localement la règle ESLint `svelte/no-navigation-without-resolve` ; les autres liens internes gardent `resolve()` directement. On évite ainsi toute modification générale du lint ou des routes typées. Les CI App et Users assemblée doivent valider ce cas de module facultatif.

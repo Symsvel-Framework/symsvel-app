@@ -48,7 +48,10 @@
       <input id="login-password" type="password" autocomplete="current-password" bind:value={password} required />
       <button type="submit" disabled={busy}>{busy ? t.signInBusy : t.signInButton}</button>
     </form>
-    <p><a href={registrationHref}>{t.register}</a></p>
+    <p>
+      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+      <a href={registrationHref}>{t.register}</a>
+    </p>
     <p><a href={resolve('/verify-email')}>{t.verifyEmail}</a></p>
   </section>
 </main>
