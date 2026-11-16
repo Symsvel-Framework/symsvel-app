@@ -58,3 +58,7 @@ Deux assertions copiées depuis le client BO ont été adaptées à la véritabl
 ### Routage des modules installés à la demande (16/11/2026)
 
 La page native `/login` propose `/register`, route injectée **uniquement après installation de Users**. Le `resolve('/register')` typé de SvelteKit échoue lorsque le dépôt App est compilé indépendamment avant synchronisation. Le lien est donc construit à partir du préfixe natif `base` (`$app/paths`) avec `/register`. Les routes **natives** connues (`/login`, `/dashboard`, `/verify-email`) continuent d'utiliser `resolve()`. Ce contrat est vérifié par la CI du dépôt App et celle de l'App assemblée dans Users.
+
+### Tests navigateurs App (16/11/2026)
+
+`src/routes/app-auth.e2e.ts` vérifie dans Chromium les écrans natifs avec réponses API simulées : connexion App, vérification de session avec Bearer App, déconnexion, refus de connexion, confirmation d'e-mail avec retrait du jeton d'URL, et renvoi anonyme d'une confirmation. La validation contrôle aussi les paramètres HTTP et l'absence d'Authorization sur les appels `/apiopen`. Ces tests s'ajoutent aux tests Vitest du client, mais ne remplacent pas les crash-tests avec le vrai backend et l'envoi SMTP.
