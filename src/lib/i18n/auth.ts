@@ -1,3 +1,5 @@
+import { generatedTranslation } from './generated-translations';
+
 const labels = {
   fr: {
     signIn: 'Connexion', signInDescription: 'Accédez à votre espace personnel.',
@@ -62,5 +64,9 @@ const labels = {
 };
 export type AuthLabels = (typeof labels)['fr'];
 export function authLabels(lang: string | null | undefined): AuthLabels {
-  return lang?.toLowerCase().split('-')[0] === 'en' ? labels.en : labels.fr;
+  const base = lang?.toLowerCase().split('-')[0] === 'en' ? labels.en : labels.fr;
+  return Object.fromEntries(Object.entries(base).map(([key, value]) => [
+    key,
+    typeof value === 'string' ? (generatedTranslation(lang, `auth.${key}`) ?? value) : value
+  ])) as AuthLabels;
 }
