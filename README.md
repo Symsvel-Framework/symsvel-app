@@ -86,3 +86,8 @@ Vérifications : tests de sélection FR/EN/autres locales et tests de build/CI. 
 ### Compatibilité Svelte de la jauge de récupération (17/11/2026)
 
 La route `/reset-password` ferme explicitement la balise HTML non vide `<meter></meter>` ; la forme `<meter />` générait un avertissement de compilation Svelte 5 lors des scénarios Playwright. Cette correction ne change pas le calcul de robustesse ni les règles de mot de passe. Le parcours d'inscription Users dispose de la correction correspondante dans son module propriétaire. Les CI et le CT utilisateur restent la validation finale.
+
+
+## Dictionnaires statiques de traductions (17/11/2026)
+
+Le dictionnaire `src/lib/i18n/generated/<lang>.ts` est publié localement par SymSvel Tooling depuis Languages, puis inclus dans les builds SvelteKit par `src/lib/i18n/generated-translations.ts` (`import.meta.glob`). Les fichiers générés sont facultatifs, y compris lors d'une installation vierge ; le fallback à la clé prend le dictionnaire français disponible, puis les libellés intégrés. La langue ISO du compte ne change pas. `authLabels()` lit désormais les clés `auth.*` du dictionnaire généré pour ses libellés textuels. Les textes des modules supplémentaires doivent suivre le même contrat. Aucun accès Redis/BDD n'est requis pour rendre ces fichiers statiques et il faut rebuild via Git/CD après leur mise à jour.
