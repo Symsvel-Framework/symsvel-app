@@ -62,5 +62,5 @@ const labels = {
 };
 export type AuthLabels = (typeof labels)['fr'];
 export function authLabels(lang: string | null | undefined): AuthLabels {
-  return lang?.toLowerCase().split('-')[0] === 'fr' ? labels.fr : labels.en;
+  return lang?.toLowerCase().split('-')[0] === 'en' ? labels.en : labels.fr;
 }
