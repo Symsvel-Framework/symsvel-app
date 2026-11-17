@@ -76,3 +76,9 @@ Le helper natif `src/lib/password/strength.ts` calcule sur la saisie un indicate
 ### Indicateur de mot de passe sur `/reset-password` (16/11/2026)
 
 La page utilise le helper natif `passwordStrength()` (règle serveur inchangée : 12 à 1024 octets UTF-8, sans NUL) et présente une jauge de diversité traduite FR/EN. Les classes de caractères influencent l'indicateur uniquement, sans imposer une nouvelle contrainte serveur. La validation de formulaire emploie `strength.valid`, et les attributs HTML `minlength` en caractères ont été retirés pour éviter les divergences sur les saisies Unicode. CI et CT à vérifier.
+
+## Fallback français des libellés d'interface (17/11/2026)
+
+Les libellés intégrés de l'interface sont sélectionnés à partir de la langue d'interface (code ISO du navigateur ou du compte). Lorsque la locale n'a pas de dictionnaire intégré, les libellés français sont utilisés ; l'anglais reste disponible explicitement pour `en`. Le fallback ne modifie ni la langue ISO du site ni celle du compte et n'impose pas l'existence de traductions avant l'installation. Le repli doit être réalisé à la clé lors de l'introduction des dictionnaires dynamiques ; l'éditeur BO des traductions et le chargement fichier/BDD ne sont pas fournis par cette seule correction.
+
+Vérifications : tests de sélection FR/EN/autres locales et tests de build/CI. La validation finale nécessite les crash-tests locaux sur le parcours Setup, BO et App.
