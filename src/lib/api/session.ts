@@ -9,6 +9,37 @@ type LoginTokens = {
 	token_type: 'Bearer';
 };
 
+export type SecondFactorChallenge = {
+	second_factor_required: true;
+	challenge: string;
+	challenge_expires_at: string;
+	enrollment_required: boolean;
+	totp_secret?: string;
+	provisioning_uri?: string;
+};
+export class SecondFactorRequired extends Error {
+	constructor() {
+		super('Additional authentication required');
+		this.name = 'SecondFactorRequired';
+	}
+}
+let pendingSecondFactor: SecondFactorChallenge | null = null;
+export function pendingAppSecondFactor(): SecondFactorChallenge | null {
+	return pendingSecondFactor && Date.parse(pendingSecondFactor.challenge_expires_at) > Date.now()
+		? pendingSecondFactor
+		: null;
+}
+function validSecondFactor(value: unknown): value is SecondFactorChallenge {
+	if (!value || typeof value !== 'object') return false;
+	const data = value as Partial<SecondFactorChallenge>;
+	return data.second_factor_required === true &&
+		typeof data.challenge === 'string' && /^[A-Za-z0-9_-]{43}$/.test(data.challenge) &&
+		typeof data.challenge_expires_at === 'string' &&
+		Number.isFinite(Date.parse(data.challenge_expires_at)) &&
+		Date.parse(data.challenge_expires_at) > Date.now() &&
+		typeof data.enrollment_required === 'boolean';
+}
+
 let session: LoginTokens | null = null;
 let sessionGeneration = 0;
 let pendingRefresh: {
@@ -74,11 +105,17 @@ export async function loginApp(email: string, password: string): Promise<AppIden
 	const generation = ++sessionGeneration;
 	pendingRefresh = null;
 	session = null;
-	const tokens = await api<LoginTokens>('/apiopen/auth/login', {
+	pendingSecondFactor = null;
+	const tokens = await api<LoginTokens | SecondFactorChallenge>('/apiopen/auth/login', {
 		method: 'POST',
 		public: true,
 		body: JSON.stringify({ email, password })
 	});
+	if (generation !== sessionGeneration) throw new Error('Authentication request superseded');
+	if (validSecondFactor(tokens)) {
+		pendingSecondFactor = tokens;
+		throw new SecondFactorRequired();
+	}
 	if (
 		!tokens ||
 		tokens.token_type !== 'Bearer' ||
@@ -111,6 +148,46 @@ export async function loginApp(email: string, password: string): Promise<AppIden
 		if (generation === sessionGeneration) session = null;
 		throw error;
 	}
+}
+
+/**
+ * Complete a single-use 2FA challenge. No App token is stored until the
+ * identity has been checked using the normal Auth endpoint.
+ */
+export async function completeAppSecondFactor(code: string): Promise<string[]> {
+	const pending = pendingAppSecondFactor();
+	if (!pending) throw new Error('No active second-factor challenge.');
+	const generation = sessionGeneration;
+	const tokens = await api<LoginTokens & { recovery_codes?: string[] }>(
+		'/apiopen/auth/second-factor', {
+			method: 'POST',
+			public: true,
+			body: JSON.stringify({ challenge: pending.challenge, code })
+		}
+	);
+	if (generation !== sessionGeneration) throw new Error('Authentication request superseded');
+	if (!tokens || tokens.token_type !== 'Bearer' ||
+		!tokens.access_token || !tokens.refresh_token ||
+		!Number.isFinite(Date.parse(tokens.expires_at)) ||
+		!Number.isFinite(Date.parse(tokens.refresh_expires_at)) ||
+		Date.parse(tokens.expires_at) <= Date.now() ||
+		Date.parse(tokens.refresh_expires_at) <= Date.now()) {
+		throw new Error('Invalid second-factor response');
+	}
+	const identity = await api<AppIdentity>('/api/auth/me', { accessToken: tokens.access_token });
+	if (generation !== sessionGeneration || identity.context !== 'app' ||
+		!Number.isInteger(identity.id) || identity.id < 1) {
+		throw new Error('Invalid App identity after 2FA');
+	}
+	session = {
+		access_token: tokens.access_token,
+		refresh_token: tokens.refresh_token,
+		expires_at: tokens.expires_at,
+		refresh_expires_at: tokens.refresh_expires_at,
+		token_type: tokens.token_type
+	};
+	pendingSecondFactor = null;
+	return Array.isArray(tokens.recovery_codes) ? tokens.recovery_codes : [];
 }
 
 export async function currentApp(): Promise<AppIdentity | null> {
