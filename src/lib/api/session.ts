@@ -211,6 +211,7 @@ export async function currentApp(): Promise<AppIdentity | null> {
 }
 
 export async function logoutApp(): Promise<void> {
+	pendingSecondFactor = null;
 	++sessionGeneration;
 	pendingRefresh = null;
 	const previous = session;
