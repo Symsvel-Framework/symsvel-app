@@ -3,7 +3,7 @@
   import { resolve } from '$app/paths';
   import { ApiError } from '../../lib/api/client';
   import { uiLanguage } from '../../lib/api/locales';
-  import { loginApp } from '../../lib/api/session';
+  import { loginApp, SecondFactorRequired } from '../../lib/api/session';
   import { authLabels } from '../../lib/i18n/auth';
 
   let email = $state('');
@@ -27,6 +27,12 @@
       password = '';
       await goto(resolve('/dashboard'), { replaceState: true });
     } catch (cause) {
+      if (cause instanceof SecondFactorRequired) {
+        password = '';
+        await goto(resolve('/').replace(/\/$/, '') + '/two-factor');
+        return;
+      }
+
       error = cause instanceof ApiError && cause.status === 401 ? t.invalidCredentials : t.genericError;
     } finally {
       busy = false;
