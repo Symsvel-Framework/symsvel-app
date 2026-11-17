@@ -82,3 +82,7 @@ La page utilise le helper natif `passwordStrength()` (règle serveur inchangée 
 Les libellés intégrés de l'interface sont sélectionnés à partir de la langue d'interface (code ISO du navigateur ou du compte). Lorsque la locale n'a pas de dictionnaire intégré, les libellés français sont utilisés ; l'anglais reste disponible explicitement pour `en`. Le fallback ne modifie ni la langue ISO du site ni celle du compte et n'impose pas l'existence de traductions avant l'installation. Le repli doit être réalisé à la clé lors de l'introduction des dictionnaires dynamiques ; l'éditeur BO des traductions et le chargement fichier/BDD ne sont pas fournis par cette seule correction.
 
 Vérifications : tests de sélection FR/EN/autres locales et tests de build/CI. La validation finale nécessite les crash-tests locaux sur le parcours Setup, BO et App.
+
+### Compatibilité Svelte de la jauge de récupération (17/11/2026)
+
+La route `/reset-password` ferme explicitement la balise HTML non vide `<meter></meter>` ; la forme `<meter />` générait un avertissement de compilation Svelte 5 lors des scénarios Playwright. Cette correction ne change pas le calcul de robustesse ni les règles de mot de passe. Le parcours d'inscription Users dispose de la correction correspondante dans son module propriétaire. Les CI et le CT utilisateur restent la validation finale.
