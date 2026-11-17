@@ -68,7 +68,7 @@
         <label for="reset-password">{t.newPassword}</label>
         <input id="reset-password" type="password" autocomplete="new-password" maxlength="1024" bind:value={password} required />
         <small>{t.resetPasswordRule}</small>
-        <meter min="0" max="4" value={strength.score} aria-label={t.passwordStrength} />
+        <meter min="0" max="4" value={strength.score} aria-label={t.passwordStrength}></meter>
         <small aria-live="polite">{t.passwordStrength}: {t.strengthLevels[strength.score]}</small>
         <small>{t.strengthHint}</small>
         <label for="reset-confirm">{t.confirmPassword}</label>
