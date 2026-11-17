@@ -91,3 +91,10 @@ La route `/reset-password` ferme explicitement la balise HTML non vide `<meter><
 ## Dictionnaires statiques de traductions (17/11/2026)
 
 Le dictionnaire `src/lib/i18n/generated/<lang>.ts` est publié localement par SymSvel Tooling depuis Languages, puis inclus dans les builds SvelteKit par `src/lib/i18n/generated-translations.ts` (`import.meta.glob`). Les fichiers générés sont facultatifs, y compris lors d'une installation vierge ; le fallback à la clé prend le dictionnaire français disponible, puis les libellés intégrés. La langue ISO du compte ne change pas. `authLabels()` lit désormais les clés `auth.*` du dictionnaire généré pour ses libellés textuels. Les textes des modules supplémentaires doivent suivre le même contrat. Aucun accès Redis/BDD n'est requis pour rendre ces fichiers statiques et il faut rebuild via Git/CD après leur mise à jour.
+
+
+## App : connexion avec module 2FA optionnel (17/11/2026)
+
+Si `symsvel-framework/module-two-factor` est installé, `/apiopen/auth/login` peut répondre HTTP 202 avec un challenge temporaire. Le client conserve celui-ci en mémoire et la page de connexion dirige vers `/two-factor`, route apportée par le module Svelte uniquement au moment de sa synchronisation. Sans module, la connexion normale est conservée. `completeAppSecondFactor` valide le challenge via `/apiopen/auth/second-factor` puis confirme l'identité via `/api/auth/me` avant d'accepter la session.
+
+Aucun refresh token n'est persisté dans le navigateur ; aucun code TOTP n'est mémorisé au-delà de la saisie. Les codes de secours ne sont visibles qu'après l'enrôlement initial. Vérifier au CT l'installation BO seul, App et les routes optionnelles, avec politiques 2FA indépendantes.
