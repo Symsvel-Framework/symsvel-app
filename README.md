@@ -125,3 +125,8 @@ Les libellés d'authentification de l'App, y compris les niveaux de robustesse, 
 ### Propriété des textes natifs de l'App
 
 Le tableau de bord hôte est indépendant des modules : ses libellés sont désormais dans `src/lib/translations/system/{fr,en}.ts`, aux clés `app.system.dashboard.*`. Les actions de connexion, déconnexion et vérification de session restent propres au module Auth (`app.auth.*`). Le composant conserve ses textes existants comme fallback et ne demande aucune API runtime.
+
+
+### Validation CI de la branche de traduction (18/11/2026)
+
+La CI complète de `feat/translations-sources` a terminé avec succès sur les runners locaux. Le déclencheur temporaire de cette branche a été retiré du workflow, en conservant les déclencheurs habituels `dev`, `main` et PR. Les tests d'installation et crash-tests XT restent indispensables avant le merge.
