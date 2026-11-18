@@ -130,3 +130,7 @@ Le tableau de bord hôte est indépendant des modules : ses libellés sont déso
 ### Validation CI de la branche de traduction (18/11/2026)
 
 La CI complète de `feat/translations-sources` a terminé avec succès sur les runners locaux. Le déclencheur temporaire de cette branche a été retiré du workflow, en conservant les déclencheurs habituels `dev`, `main` et PR. Les tests d'installation et crash-tests XT restent indispensables avant le merge.
+
+### Compatibilité de la migration du dashboard App
+
+Les anciennes personnalisations de `auth.dashboard` et `auth.loggedIn` ont été déplacées en BDD par Languages vers `app.system.dashboard.title` et `app.system.dashboard.loggedIn`. Le helper App consulte également les anciennes clés des fichiers `lib/i18n/generated` durant la transition, en donnant toujours priorité aux surcharges canoniques. Cela évite une disparition temporaire des personnalisations avant republication locale.

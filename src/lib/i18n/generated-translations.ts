@@ -25,6 +25,13 @@ export function lookupGeneratedDictionary(dictionary: unknown, dottedKey: string
 	return typeof value === 'string' ? value : null;
 }
 
+/** Compatibility with the former Auth-owned App dashboard translation keys. */
+export function legacyAppSystemKey(publicKey: string): string | null {
+	if (publicKey === 'system.dashboard.title') return 'auth.dashboard';
+	if (publicKey === 'system.dashboard.loggedIn') return 'auth.loggedIn';
+	return null;
+}
+
 export function generatedTranslation(language: string | null | undefined, key: string): string | null {
 	const scope = 'app';
 	const iso = language?.trim().toLowerCase().replace(/_/g, '-').split('-')[0] ?? 'fr';
@@ -38,6 +45,11 @@ export function generatedTranslation(language: string | null | undefined, key: s
 		if (override !== null && override.trim() !== '') return override;
 		const previous = lookupGeneratedDictionary(legacy['./generated/' + candidate + '.ts'], publicKey);
 		if (previous !== null && previous.trim() !== '') return previous;
+		const renamed = scoped ? legacyAppSystemKey(publicKey) : null;
+		if (renamed !== null) {
+			const value = lookupGeneratedDictionary(legacy['./generated/' + candidate + '.ts'], renamed);
+			if (value !== null && value.trim() !== '') return value;
+		}
 		if (scoped && /^[a-z][a-z0-9-]*$/.test(moduleName) && relative) {
 			const source = lookupGeneratedDictionary(owned['../translations/' + moduleName + '/' + candidate + '.ts'], relative);
 			if (source !== null && source.trim() !== '') return source;
