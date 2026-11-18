@@ -67,6 +67,8 @@ export function authLabels(lang: string | null | undefined): AuthLabels {
   const base = lang?.toLowerCase().split('-')[0] === 'en' ? labels.en : labels.fr;
   return Object.fromEntries(Object.entries(base).map(([key, value]) => [
     key,
-    typeof value === 'string' ? (generatedTranslation(lang, `auth.${key}`) ?? value) : value
+    Array.isArray(value)
+      ? value.map((entry, index) => generatedTranslation(lang, `app.auth.${key}.${index}`) ?? entry)
+      : typeof value === 'string' ? (generatedTranslation(lang, `app.auth.${key}`) ?? value) : value
   ])) as AuthLabels;
 }

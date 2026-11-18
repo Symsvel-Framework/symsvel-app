@@ -115,3 +115,5 @@ et reconstruire l'interface. Vérifier au CT le scan et la saisie du code.
 ## Traductions des composants et modules (18/11/2026)
 
 Les textes système sont fournis par le composant sous `src/lib/translations/system/<lang>.ts` ; les textes des modules par Tooling sous `src/lib/translations/<module>/<lang>.ts`. La convention est `<scope>.<module|system>.<key>`. Le helper préfère `src/lib/translations/generated` et conserve une lecture des anciens `src/lib/i18n/generated` durant la migration. Chargement statique au build, fallback français à la clé, aucune requête runtime.
+
+Les libellés d'authentification de l'App, y compris les niveaux de robustesse, appartiennent au module Auth. L'hôte conserve son helper et son fallback embarqué mais utilise les clés canoniques `app.auth.*`, dont les fichiers source proviennent de `symsvel-module-auth/app/src/lib/translations` via Tooling.
