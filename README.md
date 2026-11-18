@@ -121,3 +121,7 @@ Les libellés d'authentification de l'App, y compris les niveaux de robustesse, 
 ### Dictionnaires et formatage
 
 `src/lib/translations/**` est exclu de Prettier, car ces fichiers sont des exports TypeScript de données JSON strictes analysées par Tooling. Les dictionnaires synchronisés depuis les modules et les fichiers générés par Languages ne doivent pas être réécrits en objets JavaScript à clés non citées. Les autres sources du projet restent formatées normalement.
+
+### Propriété des textes natifs de l'App
+
+Le tableau de bord hôte est indépendant des modules : ses libellés sont désormais dans `src/lib/translations/system/{fr,en}.ts`, aux clés `app.system.dashboard.*`. Les actions de connexion, déconnexion et vérification de session restent propres au module Auth (`app.auth.*`). Le composant conserve ses textes existants comme fallback et ne demande aucune API runtime.
