@@ -98,3 +98,16 @@ Le dictionnaire `src/lib/i18n/generated/<lang>.ts` est publié localement par Sy
 Si `symsvel-framework/module-two-factor` est installé, `/apiopen/auth/login` peut répondre HTTP 202 avec un challenge temporaire. Le client conserve celui-ci en mémoire et la page de connexion dirige vers `/two-factor`, route apportée par le module Svelte uniquement au moment de sa synchronisation. Sans module, la connexion normale est conservée. `completeAppSecondFactor` valide le challenge via `/apiopen/auth/second-factor` puis confirme l'identité via `/api/auth/me` avant d'accepter la session.
 
 Aucun refresh token n'est persisté dans le navigateur ; aucun code TOTP n'est mémorisé au-delà de la saisie. Les codes de secours ne sont visibles qu'après l'enrôlement initial. Vérifier au CT l'installation BO seul, App et les routes optionnelles, avec politiques 2FA indépendantes.
+
+## QR TOTP du module TwoFactor (18/11/2026)
+
+Le module TwoFactor propose un QR d'enrôlement basé sur l'URI
+`provisioning_uri`, dessiné **localement dans le navigateur** à l'aide de
+`qrcode@^1.5.4` et `@types/qrcode@^1.5.5` fournis par l'hôte App.
+Le secret TOTP reste dans le challenge temporaire pré-session ; aucun service
+externe ne reçoit la clé et aucun jeton n'est ajouté à un stockage persistant.
+La saisie manuelle reste possible si le QR ne peut pas être affiché.
+
+Pour les projets avec App, lancer `symsvel update app` avant de synchroniser
+la nouvelle version du module TwoFactor afin de mettre à jour le lock npm
+et reconstruire l'interface. Vérifier au CT le scan et la saisie du code.
