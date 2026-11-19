@@ -152,3 +152,18 @@ Comme les tokens App sont conservés en mémoire, la navigation client Svelte
 doit être testée sur XT sans provoquer de rechargement complet du document.
 Un rechargement explicite peut encore imposer une nouvelle connexion selon
 la politique de session App existante. CI + CT requis.
+
+## Branding public (19/11/2026)
+
+La connexion et le dashboard lisent le nom du projet depuis
+`GET /apiopen/project`, via `api(..., { public: true })`.
+Le Back ne publie que `data.name` validé ; l'App ne consulte jamais
+`.symsvel/project.json` ou les données privées du Setup. En
+l'absence de réponse, le repli est `SymSvel`. L'intitulé affiché
+et le titre des pages natives sont adaptés sans serveur Node et sans
+rebuild du Svelte statique pour un changement de nom.
+
+Le rendu Svelte échappe systématiquement le texte. Ce correctif
+ne prend pas encore en charge la personnalisation des images, ni
+un shell App complet, qui reste différé après stabilisation du BO.
+CT XT nécessaire, notamment sur les origines CORS App et un nom Unicode.

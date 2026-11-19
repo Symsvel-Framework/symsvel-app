@@ -4,10 +4,12 @@
   import { resolve } from '$app/paths';
   import type { Path } from '$app/types';
   import { currentApp, logoutApp } from '../../lib/api/session';
+  import { publicProjectName } from '../../lib/branding';
   import { uiLanguage } from '../../lib/api/locales';
   import { authLabels } from '../../lib/i18n/auth';
   import { generatedTranslation } from '../../lib/i18n/generated-translations';
 
+  let brandName = $state('SymSvel');
   let ready = $state(false);
   let userId = $state<number | null>(null);
   const language = $derived($uiLanguage ?? (typeof navigator === 'undefined' ? 'en' : navigator.language));
@@ -21,6 +23,7 @@
 
   onMount(() => {
     let mounted = true;
+    void publicProjectName().then((name) => { if (mounted) brandName = name; });
     void currentApp().then((identity) => {
       if (!mounted) return;
       if (!identity) {
@@ -40,10 +43,10 @@
   }
 </script>
 
-<svelte:head><title>{host.dashboard} | SymSvel App</title></svelte:head>
+<svelte:head><title>{host.dashboard} | {brandName} App</title></svelte:head>
 {#if ready}
   <div class="bo-shell">
-    <aside class="bo-sidebar"><div class="bo-brand">SymSvel App</div></aside>
+    <aside class="bo-sidebar"><div class="bo-brand">{brandName} App</div></aside>
     <div class="bo-main">
       <header class="bo-topbar">
         <span>{host.dashboard} #{userId}</span>
