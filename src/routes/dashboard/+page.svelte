@@ -5,11 +5,17 @@
   import { currentApp, logoutApp } from '../../lib/api/session';
   import { uiLanguage } from '../../lib/api/locales';
   import { authLabels } from '../../lib/i18n/auth';
+  import { generatedTranslation } from '../../lib/i18n/generated-translations';
 
   let ready = $state(false);
   let userId = $state<number | null>(null);
   const language = $derived($uiLanguage ?? (typeof navigator === 'undefined' ? 'en' : navigator.language));
   const t = $derived(authLabels(language));
+  // Host-only dashboard copy belongs to App.system, not to Auth.
+  const host = $derived({
+    dashboard: generatedTranslation(language, 'app.system.dashboard.title') ?? t.dashboard,
+    loggedIn: generatedTranslation(language, 'app.system.dashboard.loggedIn') ?? t.loggedIn
+  });
 
   onMount(() => {
     let mounted = true;
@@ -32,16 +38,16 @@
   }
 </script>
 
-<svelte:head><title>{t.dashboard} | SymSvel App</title></svelte:head>
+<svelte:head><title>{host.dashboard} | SymSvel App</title></svelte:head>
 {#if ready}
   <div class="bo-shell">
     <aside class="bo-sidebar"><div class="bo-brand">SymSvel App</div></aside>
     <div class="bo-main">
       <header class="bo-topbar">
-        <span>{t.dashboard} #{userId}</span>
+        <span>{host.dashboard} #{userId}</span>
         <button type="button" onclick={logout}>{t.signOut}</button>
       </header>
-      <main class="bo-content"><section class="welcome"><h1>{t.dashboard}</h1><p>{t.loggedIn}</p></section></main>
+      <main class="bo-content"><section class="welcome"><h1>{host.dashboard}</h1><p>{host.loggedIn}</p></section></main>
     </div>
   </div>
 {:else}

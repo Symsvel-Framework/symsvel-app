@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generatedTranslation, lookupGeneratedDictionary } from './generated-translations';
+import { generatedTranslation, legacyAppSystemKey, lookupGeneratedDictionary } from './generated-translations';
 
 describe('generated translations', () => {
 	it('resolves nested keys and rejects unsupported values', () => {
@@ -11,5 +11,11 @@ describe('generated translations', () => {
 	});
 	it('does not require generated files to exist for an initial build', () => {
 		expect(generatedTranslation('fr', 'nonexistent.testing')).toBeNull();
+		expect(generatedTranslation('fr', 'app.system.missing')).toBeNull();
+		expect(generatedTranslation('fr', 'app.system.dashboard.title')).toBe('Mon espace');
+		expect(generatedTranslation('en', 'app.system.dashboard.loggedIn')).toBe('App session verified.');
+		expect(legacyAppSystemKey('system.dashboard.title')).toBe('auth.dashboard');
+		expect(legacyAppSystemKey('system.dashboard.loggedIn')).toBe('auth.loggedIn');
+		expect(legacyAppSystemKey('system.other')).toBeNull();
 	});
 });

@@ -111,3 +111,30 @@ La saisie manuelle reste possible si le QR ne peut pas être affiché.
 Pour les projets avec App, lancer `symsvel update app` avant de synchroniser
 la nouvelle version du module TwoFactor afin de mettre à jour le lock npm
 et reconstruire l'interface. Vérifier au CT le scan et la saisie du code.
+
+## Traductions des composants et modules (18/11/2026)
+
+Les textes système sont fournis par le composant sous `src/lib/translations/system/<lang>.ts` ; les textes des modules par Tooling sous `src/lib/translations/<module>/<lang>.ts`. La convention est `<scope>.<module|system>.<key>`. Le helper préfère `src/lib/translations/generated` et conserve une lecture des anciens `src/lib/i18n/generated` durant la migration. Chargement statique au build, fallback français à la clé, aucune requête runtime.
+
+Les libellés d'authentification de l'App, y compris les niveaux de robustesse, appartiennent au module Auth. L'hôte conserve son helper et son fallback embarqué mais utilise les clés canoniques `app.auth.*`, dont les fichiers source proviennent de `symsvel-module-auth/app/src/lib/translations` via Tooling.
+
+### Dictionnaires et formatage
+
+`src/lib/translations/**` est exclu de Prettier, car ces fichiers sont des exports TypeScript de données JSON strictes analysées par Tooling. Les dictionnaires synchronisés depuis les modules et les fichiers générés par Languages ne doivent pas être réécrits en objets JavaScript à clés non citées. Les autres sources du projet restent formatées normalement.
+
+### Propriété des textes natifs de l'App
+
+Le tableau de bord hôte est indépendant des modules : ses libellés sont désormais dans `src/lib/translations/system/{fr,en}.ts`, aux clés `app.system.dashboard.*`. Les actions de connexion, déconnexion et vérification de session restent propres au module Auth (`app.auth.*`). Le composant conserve ses textes existants comme fallback et ne demande aucune API runtime.
+
+
+### Validation CI de la branche de traduction (18/11/2026)
+
+La CI complète de `feat/translations-sources` a terminé avec succès sur les runners locaux. Le déclencheur temporaire de cette branche a été retiré du workflow, en conservant les déclencheurs habituels `dev`, `main` et PR. Les tests d'installation et crash-tests XT restent indispensables avant le merge.
+
+### Compatibilité de la migration du dashboard App
+
+Les anciennes personnalisations de `auth.dashboard` et `auth.loggedIn` ont été déplacées en BDD par Languages vers `app.system.dashboard.title` et `app.system.dashboard.loggedIn`. Le helper App consulte également les anciennes clés des fichiers `lib/i18n/generated` durant la transition, en donnant toujours priorité aux surcharges canoniques. Cela évite une disparition temporaire des personnalisations avant republication locale.
+
+### CI de la compatibilité du dashboard App (18/11/2026)
+
+La dernière CI de `feat/translations-sources`, comprenant le repli des anciennes clés `auth.dashboard` et `auth.loggedIn`, est verte. Le déclencheur de la branche de travail a été retiré ; les règles habituelles de CI `dev`/`main` sont restaurées. Les crash-tests XT et l'installation multi-dépôts restent nécessaires.
