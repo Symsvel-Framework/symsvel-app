@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
+  import type { Path } from '$app/types';
   import { currentApp, logoutApp } from '../../lib/api/session';
   import { uiLanguage } from '../../lib/api/locales';
   import { authLabels } from '../../lib/i18n/auth';
@@ -14,7 +15,8 @@
   // Host-only dashboard copy belongs to App.system, not to Auth.
   const host = $derived({
     dashboard: generatedTranslation(language, 'app.system.dashboard.title') ?? t.dashboard,
-    loggedIn: generatedTranslation(language, 'app.system.dashboard.loggedIn') ?? t.loggedIn
+    loggedIn: generatedTranslation(language, 'app.system.dashboard.loggedIn') ?? t.loggedIn,
+    profile: generatedTranslation(language, 'app.users.profile.title') ?? (language.toLowerCase().startsWith('fr') ? 'Mon profil' : 'My profile')
   });
 
   onMount(() => {
@@ -45,7 +47,10 @@
     <div class="bo-main">
       <header class="bo-topbar">
         <span>{host.dashboard} #{userId}</span>
-        <button type="button" onclick={logout}>{t.signOut}</button>
+        <div class="app-account-actions">
+          <a href={resolve('/profile' as Path)}>{host.profile}</a>
+          <button type="button" onclick={logout}>{t.signOut}</button>
+        </div>
       </header>
       <main class="bo-content"><section class="welcome"><h1>{host.dashboard}</h1><p>{host.loggedIn}</p></section></main>
     </div>
@@ -53,3 +58,8 @@
 {:else}
   <main class="auth-shell"><p role="status">{t.verifyingSession}</p></main>
 {/if}
+
+<style>
+  .app-account-actions { display: flex; align-items: center; gap: 16px; }
+  .app-account-actions a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+</style>

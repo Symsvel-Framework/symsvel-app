@@ -138,3 +138,17 @@ Les anciennes personnalisations de `auth.dashboard` et `auth.loggedIn` ont été
 ### CI de la compatibilité du dashboard App (18/11/2026)
 
 La dernière CI de `feat/translations-sources`, comprenant le repli des anciennes clés `auth.dashboard` et `auth.loggedIn`, est verte. Le déclencheur de la branche de travail a été retiré ; les règles habituelles de CI `dev`/`main` sont restaurées. Les crash-tests XT et l'installation multi-dépôts restent nécessaires.
+
+## Accès au profil App (19/11/2026)
+
+Le dashboard de l'App fournit désormais un lien vers `/profile` du module
+natif Users, lorsque le dashboard authentifié est rendu. Le module
+Users possède l'écran, ses libellés et l'API de profil ; le dashboard
+n'implémente pas de gestion des comptes ni de logique de validation.
+Ce lien est une étape minimale avant la conception du shell App complet,
+explicitement reportée après la stabilisation du BO.
+
+Comme les tokens App sont conservés en mémoire, la navigation client Svelte
+doit être testée sur XT sans provoquer de rechargement complet du document.
+Un rechargement explicite peut encore imposer une nouvelle connexion selon
+la politique de session App existante. CI + CT requis.
