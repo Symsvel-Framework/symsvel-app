@@ -167,3 +167,11 @@ Le rendu Svelte échappe systématiquement le texte. Ce correctif
 ne prend pas encore en charge la personnalisation des images, ni
 un shell App complet, qui reste différé après stabilisation du BO.
 CT XT nécessaire, notamment sur les origines CORS App et un nom Unicode.
+
+### Validation Unicode du titre (19/11/2026)
+
+Le validateur de nom public teste les codes Unicode des caractères
+(`codePointAt`) pour refuser les contrôles ASCII, sans expression
+régulière contenant ces caractères. Le même contrat de sécurité et
+le repli `SymSvel` sont préservés. Correction pour `no-control-regex`
+en CI, sans modifier l'API, la session ou le rendu du projet.
