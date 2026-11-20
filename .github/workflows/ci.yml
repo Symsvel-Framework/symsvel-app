@@ -16,6 +16,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Format with repository Prettier
+        run: npm run format
       - run: npx playwright install chromium
       - run: npm run qa
       - name: Verify deployable static build

@@ -1,0 +1,75 @@
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import { publicProjectName } from '../../lib/branding';
+  import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
+  import { ApiError } from '../../lib/api/client';
+  import { uiLanguage } from '../../lib/api/locales';
+  import { loginApp, SecondFactorRequired } from '../../lib/api/session';
+  import { authLabels } from '../../lib/i18n/auth';
+
+  let brandName = $state('SymSvel');
+  let email = $state('');
+  let password = $state('');
+  let busy = $state(false);
+  let error = $state('');
+  // Users owns /register and Tooling adds that route only to assembled projects.
+  const language = $derived($uiLanguage ?? (typeof navigator === 'undefined' ? 'en' : navigator.language));
+  const t = $derived(authLabels(language));
+  // Users contributes /register only after module synchronization.
+  // Resolve a known host route to preserve SvelteKit's deployment base.
+  const registrationHref = resolve('/').replace(/\/$/, '') + '/register';
+
+  onMount(() => {
+    let mounted = true;
+    void publicProjectName().then((name) => { if (mounted) brandName = name; });
+    return () => { mounted = false; };
+  });
+
+  async function signIn(event: SubmitEvent): Promise<void> {
+    event.preventDefault();
+    if (busy) return;
+    busy = true;
+    error = '';
+    try {
+      await loginApp(email.trim(), password);
+      password = '';
+      await goto(resolve('/dashboard'), { replaceState: true });
+    } catch (cause) {
+      if (cause instanceof SecondFactorRequired) {
+        password = '';
+        // Dynamically supplied by the optional TwoFactor module.
+				// eslint-disable-next-line svelte/no-navigation-without-resolve
+				await goto(resolve('/').replace(/\/$/, '') + '/two-factor');
+        return;
+      }
+
+      error = cause instanceof ApiError && cause.status === 401 ? t.invalidCredentials : t.genericError;
+    } finally {
+      busy = false;
+    }
+  }
+</script>
+
+<svelte:head><title>{t.signIn} | {brandName} App</title></svelte:head>
+<main class="auth-shell">
+  <section class="auth-card">
+    <header><strong>{brandName}</strong><span>App</span></header>
+    <h1>{t.signIn}</h1>
+    <p>{t.signInDescription}</p>
+    {#if error}<p class="alert" role="alert">{error}</p>{/if}
+    <form class="form" onsubmit={signIn}>
+      <label for="login-email">{t.email}</label>
+      <input id="login-email" type="email" autocomplete="username" bind:value={email} required />
+      <label for="login-password">{t.password}</label>
+      <input id="login-password" type="password" autocomplete="current-password" bind:value={password} required />
+      <button type="submit" disabled={busy}>{busy ? t.signInBusy : t.signInButton}</button>
+    </form>
+    <p>
+      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+      <a href={registrationHref}>{t.register}</a>
+    </p>
+    <p><a href={resolve('/verify-email')}>{t.verifyEmail}</a></p>
+    <p><a href={resolve('/forgot-password')}>{t.forgotPassword}</a></p>
+  </section>
+</main>
