@@ -19,6 +19,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Apply repository Prettier before release QA (parity with branch CI)
+        run: npm run format
       - run: npx playwright install chromium
       - run: npm run qa
       - name: Publish GitHub Release

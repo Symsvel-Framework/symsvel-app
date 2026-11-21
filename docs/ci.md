@@ -13,3 +13,7 @@ La release déclenchée par un tag `vX.Y.Z` utilise maintenant `[self-hosted, li
 ## Première release fonctionnelle (20/11/2026)
 
 Le libellé historique « Aucun changement fonctionnel » est remplacé par des notes générées à partir des changements réels. La QA doit précéder la GitHub Release, déclenchée exclusivement par un tag Git vérifié. Le CT final sans `--dev` est distinct des quatre CT de développement.
+
+## Correctif du workflow de publication App (20/11/2026)
+
+Le premier tag `v1.1.0` a échoué dans le job de release : `npm run qa` exécute `prettier --check .` et a trouvé 20 fichiers non formatés. La CI des branches réussissait car son workflow exécute explicitement `npm run format` avant `npm run qa`. Le workflow de release applique désormais la **même préparation que la CI** avant ses contrôles, sans changer le build ni les dépendances. Le tag `v1.1.0` reste immuable : après CI verte et inspection du job, publier une nouvelle version corrective `v1.1.1`, sans déplacer ou supprimer le tag historique. Le statut de la release n'est acquis qu'après QA et publication GitHub réussies.
