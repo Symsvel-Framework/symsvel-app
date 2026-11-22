@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: [self-hosted, linux, ARM64, symsvel]
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
       - name: Format with repository Prettier
         run: npm run format
-      - run: npx playwright install chromium
+      - run: npx playwright install --with-deps chromium
       - run: npm run qa
       - name: Verify deployable static build
         run: |
