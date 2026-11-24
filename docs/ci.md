@@ -25,3 +25,7 @@ pas `PUBLIC_*` via `import.meta.env` par défaut ; le projet utilise
 le préfixe public du contrat SymSvel. Les URL sont des données publiques,
 jamais des secrets. Les CD de projets doivent passer `PUBLIC_API_URL`
 pendant le build, et non au runtime du serveur statique.
+
+## Branding public du projet
+
+Le layout racine fournit un store par instance via `provideProjectBrand()`. Une requête anonyme à `/apiopen/project` est effectuée après hydratation. Les routes et composants appellent `getProjectBrand()` lors de leur initialisation, puis affichent `$brandName` dans les titres et les en-têtes. Login, dashboard, récupération et vérification d'adresse partagent le store lors des navigations. Le nom `SymSvel` sert uniquement de repli. La CI couvre la navigation et le repli par Playwright ; le CT doit vérifier le nom réel du projet après déploiement. Le build statique utilise `PUBLIC_API_URL` pour l'origine Back.

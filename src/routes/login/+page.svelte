@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { publicProjectName } from '../../lib/branding';
+  import { getProjectBrand } from '../../lib/branding';
   import { goto } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { ApiError } from '../../lib/api/client';
@@ -8,7 +7,7 @@
   import { loginApp, SecondFactorRequired } from '../../lib/api/session';
   import { authLabels } from '../../lib/i18n/auth';
 
-  let brandName = $state('SymSvel');
+  const brandName = getProjectBrand();
   let email = $state('');
   let password = $state('');
   let busy = $state(false);
@@ -19,12 +18,6 @@
   // Users contributes /register only after module synchronization.
   // Resolve a known host route to preserve SvelteKit's deployment base.
   const registrationHref = resolve('/').replace(/\/$/, '') + '/register';
-
-  onMount(() => {
-    let mounted = true;
-    void publicProjectName().then((name) => { if (mounted) brandName = name; });
-    return () => { mounted = false; };
-  });
 
   async function signIn(event: SubmitEvent): Promise<void> {
     event.preventDefault();
@@ -51,10 +44,10 @@
   }
 </script>
 
-<svelte:head><title>{t.signIn} | {brandName} App</title></svelte:head>
+<svelte:head><title>{t.signIn} | {$brandName} App</title></svelte:head>
 <main class="auth-shell">
   <section class="auth-card">
-    <header><strong>{brandName}</strong><span>App</span></header>
+    <header><strong>{$brandName}</strong><span>App</span></header>
     <h1>{t.signIn}</h1>
     <p>{t.signInDescription}</p>
     {#if error}<p class="alert" role="alert">{error}</p>{/if}
