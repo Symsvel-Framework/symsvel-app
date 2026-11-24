@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { getProjectBrand } from '../../lib/branding';
+  const brandName = getProjectBrand();
   import { resolve } from '$app/paths';
   import { api } from '../../lib/api/client';
   import { uiLanguage } from '../../lib/api/locales';
@@ -34,10 +36,10 @@
   }
 </script>
 
-<svelte:head><title>{t.resetRequestTitle} | SymSvel App</title></svelte:head>
+<svelte:head><title>{t.resetRequestTitle} | {$brandName} App</title></svelte:head>
 <main class="auth-shell">
   <section class="auth-card">
-    <header><strong>SymSvel</strong><span>App</span></header>
+    <header><strong>{$brandName}</strong><span>App</span></header>
     <h1>{t.resetRequestTitle}</h1>
     <p>{t.resetRequestHint}</p>
     {#if error}<p class="alert" role="alert">{error}</p>{/if}

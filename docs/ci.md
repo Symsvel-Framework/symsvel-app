@@ -15,3 +15,21 @@ Le libellé historique « Aucun changement fonctionnel » est remplacé par des 
 ## Correctif du workflow de publication App (20/11/2026)
 
 Le premier tag `v1.1.0` a échoué dans le job de release : `npm run qa` exécute `prettier --check .` et a trouvé 20 fichiers non formatés. La CI des branches réussissait car son workflow exécute explicitement `npm run format` avant `npm run qa`. Le workflow de release applique désormais la **même préparation que la CI** avant ses contrôles, sans changer le build ni les dépendances. Le tag `v1.1.0` reste immuable : après CI verte et inspection du job, publier une nouvelle version corrective `v1.1.1`, sans déplacer ou supprimer le tag historique. Le statut de la release n'est acquis qu'après QA et publication GitHub réussies.
+
+
+### Variables publiques du client Vite (22/11/2026)
+
+Les clients SvelteKit lisent `import.meta.env.PUBLIC_API_URL`. Vite ne publie
+pas `PUBLIC_*` via `import.meta.env` par défaut ; le projet utilise
+`envPrefix: ['VITE_', 'PUBLIC_']` dans `vite.config.ts` pour respecter
+le préfixe public du contrat SymSvel. Les URL sont des données publiques,
+jamais des secrets. Les CD de projets doivent passer `PUBLIC_API_URL`
+pendant le build, et non au runtime du serveur statique.
+
+## Branding public du projet
+
+Le layout racine fournit un store par instance via `provideProjectBrand()`. Une requête anonyme à `/apiopen/project` est effectuée après hydratation. Les routes et composants appellent `getProjectBrand()` lors de leur initialisation, puis affichent `$brandName` dans les titres et les en-têtes. Login, dashboard, récupération et vérification d'adresse partagent le store lors des navigations. Le nom `SymSvel` sert uniquement de repli. La CI couvre la navigation et le repli par Playwright ; le CT doit vérifier le nom réel du projet après déploiement. Le build statique utilise `PUBLIC_API_URL` pour l'origine Back.
+
+## Choix du mot de passe
+
+Le composant natif `lib/password/PasswordFeedback.svelte` affiche en FR/EN les cinq critères de création (12 caractères Unicode minimum, majuscule, minuscule, chiffre et symbole ou ponctuation), rouge/vert avec marque textuelle, et une jauge indicative. `passwordStrength().valid` applique ces critères et les garde-fous UTF-8 (1024 octets maximum, sans NUL). Les tests unitaires couvrent les limites et les classes Unicode. Le parcours reset l'utilise ; les modules App doivent consommer le même composant. Auth reste l'autorité serveur ; aucun changement aux connexions avec un ancien mot de passe.
