@@ -24,14 +24,16 @@ test('App reset page scrubs its token, confirms new password and never sends a B
     requests++;
     expect(route.request().headers()['authorization']).toBeUndefined();
     expect(route.request().postDataJSON()).toEqual({
-      token, password: 'brand-new-password-123'
+      token, password: 'Brand-new-password-123!'
     });
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'completed' }) });
   });
   await page.goto('/reset-password?token=' + token);
   await expect(page).toHaveURL(/\/reset-password$/);
-  await page.getByLabel('New password').fill('brand-new-password-123');
-  await page.getByLabel('Confirm password').fill('brand-new-password-123');
+  await page.getByLabel('New password').fill('Brand-new-password-123!');
+  await expect(page.locator('.requirements li.met')).toHaveCount(5);
+  await expect(page.getByRole('meter')).toHaveAttribute('aria-valuenow', '4');
+  await page.getByLabel('Confirm password').fill('Brand-new-password-123!');
   await page.getByRole('button', { name: 'Save new password' }).click();
   await expect(page.getByRole('status')).toContainText('Your password was changed');
   expect(requests).toBe(1);

@@ -29,3 +29,7 @@ pendant le build, et non au runtime du serveur statique.
 ## Branding public du projet
 
 Le layout racine fournit un store par instance via `provideProjectBrand()`. Une requête anonyme à `/apiopen/project` est effectuée après hydratation. Les routes et composants appellent `getProjectBrand()` lors de leur initialisation, puis affichent `$brandName` dans les titres et les en-têtes. Login, dashboard, récupération et vérification d'adresse partagent le store lors des navigations. Le nom `SymSvel` sert uniquement de repli. La CI couvre la navigation et le repli par Playwright ; le CT doit vérifier le nom réel du projet après déploiement. Le build statique utilise `PUBLIC_API_URL` pour l'origine Back.
+
+## Choix du mot de passe
+
+Le composant natif `lib/password/PasswordFeedback.svelte` affiche en FR/EN les cinq critères de création (12 caractères Unicode minimum, majuscule, minuscule, chiffre et symbole ou ponctuation), rouge/vert avec marque textuelle, et une jauge indicative. `passwordStrength().valid` applique ces critères et les garde-fous UTF-8 (1024 octets maximum, sans NUL). Les tests unitaires couvrent les limites et les classes Unicode. Le parcours reset l'utilise ; les modules App doivent consommer le même composant. Auth reste l'autorité serveur ; aucun changement aux connexions avec un ancien mot de passe.

@@ -7,6 +7,7 @@
   import { uiLanguage } from '../../lib/api/locales';
   import { authLabels } from '../../lib/i18n/auth';
   import { passwordStrength } from '../../lib/password/strength';
+  import PasswordFeedback from '../../lib/password/PasswordFeedback.svelte';
 
   let token = $state<string | null>(null);
   let loaded = $state(false);
@@ -69,10 +70,7 @@
       <form class="form" onsubmit={complete}>
         <label for="reset-password">{t.newPassword}</label>
         <input id="reset-password" type="password" autocomplete="new-password" maxlength="1024" bind:value={password} required />
-        <small>{t.resetPasswordRule}</small>
-        <meter min="0" max="4" value={strength.score} aria-label={t.passwordStrength}></meter>
-        <small aria-live="polite">{t.passwordStrength}: {t.strengthLevels[strength.score]}</small>
-        <small>{t.strengthHint}</small>
+        <PasswordFeedback {password} />
         <label for="reset-confirm">{t.confirmPassword}</label>
         <input id="reset-confirm" type="password" autocomplete="new-password" maxlength="1024" bind:value={confirmation} required />
         <button type="submit" disabled={busy}>{t.resetButton}</button>
@@ -82,7 +80,3 @@
   </section>
 </main>
 
-<style>
-  meter { display: block; width: 100%; height: 13px; }
-  small { color: #667085; }
-</style>
