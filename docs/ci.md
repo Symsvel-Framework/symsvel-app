@@ -33,3 +33,7 @@ Le layout racine fournit un store par instance via `provideProjectBrand()`. Une 
 ## Choix du mot de passe
 
 Le composant natif `lib/password/PasswordFeedback.svelte` affiche en FR/EN les cinq critères de création (12 caractères Unicode minimum, majuscule, minuscule, chiffre et symbole ou ponctuation), rouge/vert avec marque textuelle, et une jauge indicative. `passwordStrength().valid` applique ces critères et les garde-fous UTF-8 (1024 octets maximum, sans NUL). Les tests unitaires couvrent les limites et les classes Unicode. Le parcours reset l'utilise ; les modules App doivent consommer le même composant. Auth reste l'autorité serveur ; aucun changement aux connexions avec un ancien mot de passe.
+
+## Shell App et routes de modules
+
+Le layout racine conserve le shell authentifié lors de la navigation entre les routes privées, y compris `/profile` fourni par Users. Les parcours publics (connexion, inscription, activation, récupération, confirmations et challenge 2FA) restent hors shell. Le shell hôte vérifie la session via `currentApp`, sans modifier la politique de session Auth en mémoire. Les modules ne fournissent que le contenu de leur page. Les tests de classification des routes et de navigation protègent ce contrat ; la CI Users vérifie le profil assemblé.
