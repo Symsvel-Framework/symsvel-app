@@ -37,3 +37,5 @@ Le composant natif `lib/password/PasswordFeedback.svelte` affiche en FR/EN les c
 ## Shell App et routes de modules
 
 Le layout racine conserve le shell authentifié lors de la navigation entre les routes privées, y compris `/profile` fourni par Users. Les parcours publics (connexion, inscription, activation, récupération, confirmations et challenge 2FA) restent hors shell. Le shell hôte vérifie la session via `currentApp`, sans modifier la politique de session Auth en mémoire. Les modules ne fournissent que le contenu de leur page. Les tests de classification des routes et de navigation protègent ce contrat ; la CI Users vérifie le profil assemblé.
+
+La route temporaire `/ct-remote`, utilisée pour le CT de mise à jour des composants, n’est plus distribuée. Le moteur natif retire le fichier installé s’il n’a pas été modifié localement ; les scénarios de mise à jour continuent d’utiliser leurs propres fixtures isolées dans Tooling.
